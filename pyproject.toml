@@ -1,0 +1,7 @@
+[project]
+name = "apscheduler-db"
+version = "0.1.0"
+description = "一个通用的apscheduler数据库配置服务"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []

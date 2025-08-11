@@ -1,0 +1,23 @@
+CREATE TABLE `scheduler_task_config` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `func_id` varchar(100) NOT NULL COMMENT '任务ID，唯一',
+  `func` varchar(255) NOT NULL COMMENT '调度任务执行的函数: app.tasks.request_amz#send_request_amz',
+  `name` varchar(100) DEFAULT NULL COMMENT '任务名称',
+  `trigger` varchar(20) NOT NULL DEFAULT 'date' COMMENT '任务触发方式: date/cron/interval',
+  `trigger_args` json DEFAULT NULL COMMENT '任务触发参数',
+  `args` json DEFAULT NULL COMMENT '数组形式的参数',
+  `kwargs` json DEFAULT NULL COMMENT '字典形式的参数',
+  `coalesce` tinyint(1) NOT NULL DEFAULT '1' COMMENT '合并错过的任务',
+  `executor` varchar(50) NOT NULL DEFAULT 'default' COMMENT '执行器：default/thread/process，默认使用线程池执行',
+  `replace_existing` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否允许替换存在的任务',
+  `misfire_grace_time` int NOT NULL DEFAULT '3600' COMMENT '任务延迟容忍度，默认1小时，单位秒',
+  `max_instances` int NOT NULL DEFAULT '1' COMMENT '最大实例数',
+  `timezone` varchar(50) NOT NULL DEFAULT 'Asia/Shanghai' COMMENT '调度任务执行时区',
+  `user_id` int DEFAULT NULL COMMENT '用户ID',
+  `valid` int NOT NULL DEFAULT '0' COMMENT '是否有效',
+  `unique_key` varchar(100) DEFAULT NULL COMMENT '计算任务参数的唯一标识',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `func_id` (`func_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='调度任务配置表';
