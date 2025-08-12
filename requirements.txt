@@ -4,11 +4,11 @@ fastapi[all]
 sqlmodel
 greenlet
 python-dotenv
-redis===5.2.1
+redis
 loguru
-asyncmy===0.2.10
-passlib===1.7.4
-bcrypt===4.0.1
-apscheduler===3.11.0
+asyncmy
+passlib
+bcrypt
+apscheduler
 cryptography
-pymysql===1.1.1
+pymysql
