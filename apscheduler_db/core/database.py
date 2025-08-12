@@ -4,7 +4,6 @@ from sqlalchemy import Engine
 from sqlmodel import SQLModel, Session, create_engine
 from contextlib import asynccontextmanager, contextmanager
 
-import apscheduler_db.models
 from apscheduler_db.core.settings import get_settings
 
 settings = get_settings()
@@ -64,6 +63,7 @@ async def create_db_and_tables():
     '''
     加载 app.models.* 下的所有 model 文件 初始化数据库
     '''
+    import apscheduler_db.models
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
 

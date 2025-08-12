@@ -4,9 +4,9 @@ from apscheduler_db.core.loggin import logger
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
+from apscheduler_db.core.settings import get_settings
 from apscheduler_db.core.database import init_db, create_db_and_tables
 from apscheduler_db.core.cache import get_redis
-from apscheduler_db.core.settings import get_settings
 from apscheduler_db.core import manage_task
 from apscheduler_db.routers import scheduler_job_router
 
