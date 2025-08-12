@@ -1,0 +1,10 @@
+@local_api=http://localhost:8889
+
+###
+GET {{local_api}}/get_scheduler HTTP/1.1
+
+###
+POST {{local_api}}/run_job/demo_io_task HTTP/1.1
+Content-Type: application/json
+
+{}

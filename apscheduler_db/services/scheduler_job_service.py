@@ -1,7 +1,7 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.date import DateTrigger
 from datetime import datetime, timezone
-from fastapi import Response
+from fastapi.responses import JSONResponse
 from sqlmodel import select, update
 
 from apscheduler_db.core.database import get_db_session
@@ -47,13 +47,13 @@ async def run_job(scheduler: AsyncIOScheduler, job_id: str, kwargs: dict):
         try:
             job_info = run_job_once(scheduler, job_id, job, kwargs)
             logger.debug(f"Job [{job.name}] scheduled to run immediately.")
-            return Response(job_info, media_type='application/json')
+            return JSONResponse(job_info)
         except Exception as e:
             logger.exception(f"Job {job_id} 调度触发失败: {e}")
-            return Response({"job_id": job_id}, status_code=500, media_type='application/json')
+            return JSONResponse({"job_id": job_id}, status_code=500)
     else:
         logger.error(f"Job {job_id} not found.")
-        return Response({"job_id": job_id}, status_code=404, media_type='application/json')
+        return JSONResponse({"job_id": job_id}, status_code=404)
 
 
 def query_jobs(scheduler: AsyncIOScheduler):
