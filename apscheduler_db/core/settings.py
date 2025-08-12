@@ -1,9 +1,5 @@
 from functools import lru_cache
 from pydantic_settings import BaseSettings
-from dotenv import load_dotenv
-
-load_dotenv()
-
 
 class Settings(BaseSettings):
     scheduler_app_name: str = "DefaultAppTask"
@@ -27,6 +23,7 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_prefix = "SCHEDULER_"
         extra = "allow"
+        case_sensitive = False
 
 @lru_cache
 def get_settings():
