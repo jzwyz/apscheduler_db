@@ -1,6 +1,10 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+import os
+print(f"-----> load env: SCHEDULER_MYSQLDB_URL = [{os.getenv('SCHEDULER_MYSQLDB_URL')}]")
+print(f"-----> load env: SCHEDULER_REDISDB_URL = [{os.getenv('SCHEDULER_REDISDB_URL')}]")
+
 from apscheduler_db.core.loggin import logger
 
 from fastapi import FastAPI

@@ -20,10 +20,8 @@ class Settings(BaseSettings):
         return f"{self.scheduler_app_name}:scheduler"
 
     class Config:
-        env_file = ".env"
         env_prefix = "SCHEDULER_"
         extra = "allow"
-        case_sensitive = False
 
 @lru_cache
 def get_settings():
