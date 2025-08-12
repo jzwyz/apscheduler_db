@@ -61,8 +61,8 @@ async def init_task(scheduler: AsyncIOScheduler):
     await run_db_task(scheduler)
 
     # 每分钟根据数据库的任务配置刷新调度任务
-    scheduler.add_job(run_db_task, trigger=IntervalTrigger(minutes=1), max_instances=1, kwargs={'scheduler': scheduler}, id='__run_db_task__')
-    scheduler.add_job(run_clear_logs, trigger=IntervalTrigger(days=1), max_instances=1, id='__run_clear_logs__')
+    scheduler.add_job(run_db_task, trigger=IntervalTrigger(minutes=1, seconds=0), max_instances=1, kwargs={'scheduler': scheduler}, id='__run_db_task__')
+    scheduler.add_job(run_clear_logs, trigger=IntervalTrigger(days=1, hours=2, minutes=0, seconds=0), max_instances=1, id='__run_clear_logs__')
 
 
 async def start_scheduler(app: FastAPI):

@@ -1,6 +1,6 @@
 from apscheduler_db.core.loggin import logger
 
-import uvicorn
+
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
@@ -46,5 +46,3 @@ app = FastAPI(
 # 添加路由
 app.include_router(scheduler_job_router.router)
 
-if __name__ == '__main__':
-    uvicorn.run(app, port=8888, host='0.0.0.0')

@@ -1,1 +1,1 @@
-from models import scheduler_job_model, scheduler_logger_model
+from apscheduler_db.models import scheduler_job_model, scheduler_logger_model
