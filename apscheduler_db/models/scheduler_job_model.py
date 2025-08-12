@@ -79,6 +79,6 @@ class SchedulerJob(SQLModel, table=True):
             misfire_grace_time=self.misfire_grace_time,
             max_instances=self.max_instances,
             timezone=self.timezone,
-            next_run_time=(datetime.now(tz=ZoneInfo(self.timezone)) + timedelta(seconds=5)),
+            # next_run_time=(datetime.now(tz=ZoneInfo(self.timezone)) + timedelta(seconds=5)),
             **self.trigger_args
         )
