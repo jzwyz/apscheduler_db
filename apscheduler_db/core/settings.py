@@ -20,13 +20,10 @@ class Settings(BaseSettings):
     def get_redis_perfix(self):
         return f"{self.scheduler_app_name}:scheduler"
 
-    model_config = {
-        "env_prefix": "scheduler_",  # 只加载以 scheduler_ 开头的环境变量
-        "extra": "forbid",           # 禁止未声明的额外字段
-    }
-
     class Config:
         env_file = ".env"
+        env_prefix = "scheduler_*"
+        extra = "allow"
 
 @lru_cache
 def get_settings():
