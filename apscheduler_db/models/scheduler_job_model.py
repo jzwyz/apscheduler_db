@@ -6,8 +6,8 @@ from zoneinfo import ZoneInfo
 from enum import Enum
 import json, hashlib
 
-from core.settings import get_settings
-from utils import scheduler_util
+from apscheduler_db.core.settings import get_settings
+from apscheduler_db.utils import scheduler_util
 
 setting = get_settings()
 

@@ -1,6 +1,6 @@
 import time, math, datetime
 
-from core.loggin import logger
+from apscheduler_db.core.loggin import logger
 
 def demo_io_task():
     '''

@@ -4,7 +4,7 @@ from sqlalchemy import Engine
 from sqlmodel import SQLModel, Session, create_engine
 from contextlib import asynccontextmanager, contextmanager
 
-from core.settings import get_settings
+from apscheduler_db.core.settings import get_settings
 
 settings = get_settings()
 

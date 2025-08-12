@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from core import manage_task
-import services.scheduler_job_service as sts
+from apscheduler_db.core import manage_task
+import apscheduler_db.services.scheduler_job_service as sts
 
 router = APIRouter()
 

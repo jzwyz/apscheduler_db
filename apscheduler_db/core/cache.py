@@ -1,5 +1,6 @@
 import redis.asyncio as ioredis
-from core.settings import get_settings
+
+from apscheduler_db.core.settings import get_settings
 
 redis = None
 

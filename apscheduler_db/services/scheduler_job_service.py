@@ -4,9 +4,9 @@ from datetime import datetime, timezone
 from fastapi import Response
 from sqlmodel import select, update
 
-from core.database import get_db_session
-from core.loggin import logger
-from models.scheduler_job_model import SchedulerJob
+from apscheduler_db.core.database import get_db_session
+from apscheduler_db.core.loggin import logger
+from apscheduler_db.models.scheduler_job_model import SchedulerJob
 
 def run_job_once(scheduler: AsyncIOScheduler, job_id, job, override_kwargs=None):
     '''

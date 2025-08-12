@@ -1,6 +1,5 @@
-from core.loggin import logger
+from apscheduler_db.core.loggin import logger
 
-import asyncio
 import apscheduler.events as events
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
@@ -8,10 +7,10 @@ from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from apscheduler.executors.asyncio import AsyncIOExecutor
 from fastapi import FastAPI
 
-from services.scheduler_job_log_service import sync_add_log, run_clear_logs
-from services.scheduler_job_service import run_db_task
-from core.settings import get_settings
-from models.scheduler_logger_model import SchedulerLogger
+from apscheduler_db.services.scheduler_job_log_service import sync_add_log, run_clear_logs
+from apscheduler_db.services.scheduler_job_service import run_db_task
+from apscheduler_db.core.settings import get_settings
+from apscheduler_db.models.scheduler_logger_model import SchedulerLogger
 
 settings = get_settings()
 

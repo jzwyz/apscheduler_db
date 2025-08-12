@@ -1,13 +1,9 @@
 from typing import Optional
-from sqlmodel import Field, SQLModel, Column, JSON, BigInteger, String, SMALLINT, Integer, TIMESTAMP, Text, Float
-from sqlalchemy import func as sql_func, text
-from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
-from enum import Enum
-import json, hashlib
+from sqlmodel import Field, SQLModel, Column, BigInteger, String, TIMESTAMP, Text, Float
+from sqlalchemy import func as sql_func
+from datetime import datetime
 
-from core.settings import get_settings
-from utils import scheduler_util
+from apscheduler_db.core.settings import get_settings
 
 setting = get_settings()
 

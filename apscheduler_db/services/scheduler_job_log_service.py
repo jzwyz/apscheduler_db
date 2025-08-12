@@ -1,10 +1,10 @@
 from sqlmodel import insert, delete
 from datetime import datetime, timedelta, timezone
 
-from core.database import get_db_session, get_db_session_sync
-import services.scheduler_job_service as sjs
-from models.scheduler_logger_model import SchedulerLogger
-from models.scheduler_job_model import SchedulerJob
+from apscheduler_db.core.database import get_db_session, get_db_session_sync
+import apscheduler_db.services.scheduler_job_service as sjs
+from apscheduler_db.models.scheduler_logger_model import SchedulerLogger
+from apscheduler_db.models.scheduler_job_model import SchedulerJob
 
 def sync_add_log(log: list[SchedulerLogger]):
     """新增日志（同步 insert 写法）"""
