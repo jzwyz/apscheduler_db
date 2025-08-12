@@ -3,6 +3,8 @@ from fastapi import APIRouter
 from apscheduler_db.core import manage_task
 import apscheduler_db.services.scheduler_job_service as sts
 
+from apscheduler_db.dtos import response_dto
+
 router = APIRouter()
 
 @router.get("/")
@@ -19,8 +21,8 @@ async def run_job(job_id: str, kwargs: dict = None):
 
 
 @router.get("/get_scheduler")
-async def get_scheduler():
+def get_scheduler() -> list[response_dto.JobInfoDTO]:
     """
     获取当前的调度器实例
     """
-    return await sts.query_jobs(manage_task.scheduler)
+    return sts.query_jobs(manage_task.scheduler)

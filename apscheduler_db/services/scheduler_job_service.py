@@ -7,6 +7,7 @@ from sqlmodel import select, update
 from apscheduler_db.core.database import get_db_session
 from apscheduler_db.core.loggin import logger
 from apscheduler_db.models.scheduler_job_model import SchedulerJob
+from apscheduler_db.dtos.response_dto import JobInfoDTO
 
 def run_job_once(scheduler: AsyncIOScheduler, job_id, job, override_kwargs=None):
     '''
@@ -55,14 +56,22 @@ async def run_job(scheduler: AsyncIOScheduler, job_id: str, kwargs: dict):
         return Response({"job_id": job_id}, status_code=404, media_type='application/json')
 
 
-async def query_jobs(scheduler: AsyncIOScheduler):
+def query_jobs(scheduler: AsyncIOScheduler):
     """
     查询所有jobs
     """
     if not scheduler:
         raise RuntimeError("Scheduler is not initialized.")
-    return Response([{ 'id': job.id, 'name': job.name,'next_run_time': job.next_run_time.strftime('%Y-%m-%d %H:%M:%S') } for job in scheduler.get_jobs()],
-                    media_type='application/json')
+    
+    # 排除系统内置任务
+    return [JobInfoDTO(
+        id=job.id,
+        name=job.name,
+        next_run_time=job.next_run_time.strftime('%Y-%m-%d %H:%M:%S'),
+        executor=job.executor,
+        kwargs=job.kwargs,
+        args=job.args
+    ) for job in scheduler.get_jobs() if not job.id.startswith('__')]
 
 
 async def list_dbjobs() -> list[SchedulerJob]:
