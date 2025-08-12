@@ -1,5 +1,7 @@
-from apscheduler_db.core.loggin import logger
+from dotenv import load_dotenv
+load_dotenv()
 
+from apscheduler_db.core.loggin import logger
 
 from fastapi import FastAPI
 from contextlib import asynccontextmanager

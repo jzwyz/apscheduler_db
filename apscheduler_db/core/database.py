@@ -3,10 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Engine
 from sqlmodel import SQLModel, Session, create_engine
 from contextlib import asynccontextmanager, contextmanager
-
 from apscheduler_db.core.settings import get_settings
-
-settings = get_settings()
 
 engine: AsyncEngine = None
 engine_sync: Engine = None
@@ -14,6 +11,9 @@ AsyncSessionLocal: sessionmaker = None
 SessionLocal: sessionmaker = None
 
 def init_db():
+    
+    settings = get_settings()
+
     global engine, AsyncSessionLocal, engine_sync, SessionLocal
 
     # 创建异步数据库连接
