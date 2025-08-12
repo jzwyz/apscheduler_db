@@ -4,4 +4,19 @@ version = "0.1.0"
 description = "一个通用的apscheduler数据库配置服务"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "uvicorn[standard]",
+    "gunicorn",
+    "fastapi[all]",
+    "sqlmodel",
+    "greenlet",
+    "python-dotenv",
+    "redis===5.2.1",
+    "loguru",
+    "asyncmy===0.2.10",
+    "passlib===1.7.4",
+    "bcrypt===4.0.1",
+    "apscheduler===3.11.0",
+    "cryptography",
+    "pymysql===1.1.1"
+]

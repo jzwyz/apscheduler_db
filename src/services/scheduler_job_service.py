@@ -81,7 +81,7 @@ async def update_job(job: SchedulerJob):
         return
     
     async with get_db_session() as db:
-        update_query = update(SchedulerJob).where(SchedulerJob.id == job.id).values(**job)
+        update_query = update(SchedulerJob).where(SchedulerJob.id == job.id).values(**job.model_dump())
         await db.execute(update_query)
         await db.commit()
 
@@ -105,7 +105,7 @@ async def run_db_task(scheduler: AsyncIOScheduler):
                 if job.calculate_unique_key != job.unique_key:
                     await modify_job(scheduler, job, True)
                     logger.info('[{} - {}] | 任务发生变化，执行更新', job.func_id, job.name)
-                    return
+                    continue
 
                 instance = scheduler.get_job(job.func_id)
                 if not instance:
