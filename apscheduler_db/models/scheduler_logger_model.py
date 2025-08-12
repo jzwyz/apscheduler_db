@@ -8,7 +8,7 @@ from apscheduler_db.core.settings import get_settings
 setting = get_settings()
 
 class SchedulerLogger(SQLModel, table=True):
-    __tablename__ = setting.scheduler_logger_table_name
+    __tablename__ = f'{setting.scheduler_table_name}_logger'
     __table_args__ = {'comment': '调度日志表'}
 
     id: int = Field(sa_column=Column(BigInteger,autoincrement=True,primary_key=True,comment="主键ID"))

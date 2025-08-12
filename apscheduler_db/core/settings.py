@@ -5,7 +5,6 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     scheduler_app_name: str = "DefaultAppTask"
     scheduler_table_name: str = "scheduler_job"
-    scheduler_logger_table_name: str = "scheduler_job_log"
     scheduler_mysqldb_url: str
     scheduler_redisdb_url: str
 
