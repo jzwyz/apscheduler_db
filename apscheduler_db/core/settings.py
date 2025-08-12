@@ -22,7 +22,7 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
-        env_prefix = "scheduler_*"
+        env_prefix = "SCHEDULER_"
         extra = "allow"
 
 @lru_cache
