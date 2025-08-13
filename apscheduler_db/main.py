@@ -1,54 +1,47 @@
-from apscheduler_db.core.loggin import logger
+from apscheduler_db.core.loggin import logger, init_logger
+init_logger()
 
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
+from apscheduler_db.core.settings import get_settings
+from apscheduler_db.core.database import init_db, create_db_and_tables
+from apscheduler_db.core.cache import get_redis
+from apscheduler_db.core import manage_task
+from apscheduler_db.routers import scheduler_job_router
 
-def start_instance():
+settings = get_settings()
 
-    from apscheduler_db.core.settings import get_settings
-    from apscheduler_db.core.database import init_db, create_db_and_tables
-    from apscheduler_db.core.cache import get_redis
-    from apscheduler_db.core import manage_task
-    from apscheduler_db.routers import scheduler_job_router
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """FastAPI 生命周期管理"""
+    print("🚀 启动 FastAPI 服务，定时任务启动中...")
 
-    settings = get_settings()
+    try:
+        init_db()
+        await create_db_and_tables()
+        logger.success('数据库初始化完成')
+    except Exception as e:
+        logger.error(e)
+        raise Exception(e)
 
-    @asynccontextmanager
-    async def lifespan(app: FastAPI):
-        """FastAPI 生命周期管理"""
-        print("🚀 启动 FastAPI 服务，定时任务启动中...")
+    app.__redisdb__ = await get_redis()
+    app.__settings__ = settings
 
-        try:
-            init_db()
-            await create_db_and_tables()
-            logger.success('数据库初始化完成')
-        except Exception as e:
-            logger.error(e)
-            raise Exception(e)
+    await manage_task.start_scheduler(app)
+    
+    yield  # 允许 FastAPI 继续启动
 
-        app.__redisdb__ = await get_redis()
-        app.__settings__ = settings
+    logger.info("🛑 FastAPI 关闭，定时任务停止...")
 
-        await manage_task.start_scheduler(app)
-        
-        yield  # 允许 FastAPI 继续启动
-
-        logger.info("🛑 FastAPI 关闭，定时任务停止...")
-
-        await manage_task.close_scheduler(app)
+    await manage_task.close_scheduler(app)
 
 
-    app = FastAPI(
-        description=f"{settings.scheduler_app_name}:调度模块",
-        title=settings.scheduler_app_name,
-        lifespan=lifespan
-    )
+app = FastAPI(
+    description=f"{settings.scheduler_app_name}:调度模块",
+    title=settings.scheduler_app_name,
+    lifespan=lifespan
+)
 
-    # 添加路由
-    app.include_router(scheduler_job_router.router)
-
-    return app
-
-
-# app = start_instance()
+# 添加路由
+app.include_router(scheduler_job_router.router)
