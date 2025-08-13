@@ -23,10 +23,10 @@ class SchedulerJob(SQLModel, table=True):
     trigger_args: dict = Field(default={},sa_column=Column(JSON,nullable=False,comment="任务触发参数"))
     args: list = Field(default=[],sa_column=Column(JSON,nullable=False,comment="数组形式的参数"))
     kwargs: dict = Field(default={},sa_column=Column(JSON,nullable=False,comment="字典形式的参数"))
-    coalesce: int = Field(default=1,sa_column=Column(SMALLINT,nullable=False,server_default=text("1"),comment="合并错过的任务"))
+    coalesce: int = Field(default=0,sa_column=Column(SMALLINT,nullable=False,server_default=text("0"),comment="合并错过的任务"))
     executor: str = Field(default="default",sa_column=Column(String(20),nullable=False,server_default=text("'default'"),comment="执行器：default/thread/process，默认使用线程池执行"))
     replace_existing: int = Field(default=0,sa_column=Column(SMALLINT,nullable=False,server_default=text("0"),comment="是否允许替换存在的任务"))
-    misfire_grace_time: int = Field(default=3600,sa_column=Column(Integer,nullable=False,server_default=text("3600"),comment="任务延迟容忍度，默认1小时，单位秒"))
+    misfire_grace_time: int = Field(default=10,sa_column=Column(Integer,nullable=False,server_default=text("10"),comment="任务延迟容忍度，默认1小时，单位秒"))
     max_instances: int = Field(default=1,sa_column=Column(Integer,nullable=False,server_default=text("1"),comment="最大实例数"))
     timezone: str = Field(default="Asia/Shanghai",sa_column=Column(String(50),nullable=False,server_default=text("'Asia/Shanghai'"),comment="调度任务执行时区"))
     valid: int = Field(default=0,sa_column=Column(SMALLINT,nullable=False,server_default=text("0"),comment="是否有效"))
@@ -76,7 +76,7 @@ class SchedulerJob(SQLModel, table=True):
             coalesce=self.coalesce == 1,
             executor=self.executor,
             replace_existing=self.replace_existing == 1,
-            misfire_grace_time=self.misfire_grace_time,
+            misfire_grace_time=self.misfire_grace_time if self.misfire_grace_time > 0 else None,
             max_instances=self.max_instances,
             timezone=self.timezone,
             # next_run_time=(datetime.now(tz=ZoneInfo(self.timezone)) + timedelta(seconds=5)),
