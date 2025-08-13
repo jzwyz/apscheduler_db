@@ -19,14 +19,14 @@ def init_db():
     # 创建异步数据库连接
     if not engine:
         engine = create_async_engine(settings.scheduler_mysqldb_url,
-                                    echo=True,
+                                    echo=False,
                                     pool_recycle=3600,        # 回收连接时间
                                     pool_pre_ping=True,       # 检查连接可用性
                                     pool_size=3,
                                     max_overflow=10)
     if not engine_sync:    
         engine_sync = create_engine(settings.scheduler_mysqldb_url.replace("+asyncmy", "+pymysql"),
-                                    echo=True,
+                                    echo=False,
                                     pool_recycle=3600,        # 回收连接时间
                                     pool_pre_ping=True,       # 检查连接可用性
                                     pool_size=3,
