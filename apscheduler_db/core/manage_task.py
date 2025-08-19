@@ -48,8 +48,8 @@ def job_listener(event):
         logger.warning(f"[任务错过执行] job_id={event.job_id}")
         job_log.append(SchedulerLogger(job_id=event.job_id, event='JOB_MISSED', scheduled_run_time=event.scheduled_run_time, message=f"[任务错过执行] job_id={event.job_id}"))
 
-    if job_log:
-        sync_add_log(job_log)
+    # if job_log:
+    #     sync_add_log(job_log)
 
 
 async def init_task(scheduler: AsyncIOScheduler):
