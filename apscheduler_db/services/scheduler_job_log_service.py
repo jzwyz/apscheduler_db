@@ -34,7 +34,7 @@ async def run_clear_logs():
 
         # 删除所有 不在当前任务列表的历史日志
         delete_sql_all = delete(SchedulerLogger).where(
-            SchedulerLogger.job_id.not_in_(job_ids),
+            SchedulerLogger.job_id.notin_(job_ids),
             SchedulerLogger.created_at < (datetime.now(timezone.utc) - timedelta(days=job.log_storage_days or 7))
         )
         await db.execute(delete_sql_all)
