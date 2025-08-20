@@ -31,7 +31,7 @@ def run_job_once(scheduler: AsyncIOScheduler, job_id, job, override_kwargs=None)
         'name': f"手动运行【{job.name}】",
         'replace_existing': False
     }
-    scheduler.add_job(**job_params, func=job_func, trigger=DateTrigger(run_date=datetime.now(timezone.utc)))
+    scheduler.add_job(**job_params, func=job_func, trigger=DateTrigger(run_date=datetime.now()))
     return job_params
 
 

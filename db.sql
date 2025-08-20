@@ -17,8 +17,8 @@ CREATE TABLE `scheduler_task_config` (
     `valid` int NOT NULL DEFAULT '0' COMMENT '是否有效',
     `unique_key` varchar(100) DEFAULT NULL COMMENT '计算任务参数的唯一标识',
     `log_storage_days` int NOT NULL DEFAULT '7' COMMENT '保留日志周期，默认7天，最长30天',
-    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
     UNIQUE KEY `func_id` (`func_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '调度任务配置表';
@@ -30,7 +30,8 @@ CREATE TABLE scheduler_job_log (
     `scheduled_run_time` TIMESTAMP NOT NULL COMMENT '调度时间' DEFAULT CURRENT_TIMESTAMP,
     `execution_time` FLOAT COMMENT '任务执行耗时（秒）',
     `message` TEXT NOT NULL COMMENT '日志消息',
-    `created_at` TIMESTAMP NULL COMMENT '创建时间' DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NULL COMMENT '更新时间' DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
+    `created_at` TIMESTAMP NOT NULL COMMENT '创建时间' DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL COMMENT '更新时间' DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX idx_job_id_created_at (job_id, created_at)
 ) COMMENT = '调度日志表';
