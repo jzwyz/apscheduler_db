@@ -1,4 +1,4 @@
-CREATE TABLE `scheduler_task_config` (
+CREATE TABLE `scheduler_jobs` (
     `id` int NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `func_id` varchar(100) NOT NULL COMMENT '任务ID，唯一',
     `func` varchar(255) NOT NULL COMMENT '调度任务执行的函数: app.tasks.request_amz#send_request_amz',
@@ -23,7 +23,7 @@ CREATE TABLE `scheduler_task_config` (
     UNIQUE KEY `func_id` (`func_id`)
 ) COMMENT = '调度任务配置表';
 
-CREATE TABLE scheduler_job_log (
+CREATE TABLE scheduler_jobs_logger (
     `id` BIGINT NOT NULL COMMENT '主键ID' AUTO_INCREMENT,
     `job_id` VARCHAR(100) NOT NULL COMMENT '任务ID',
     `event` VARCHAR(20) NOT NULL COMMENT '事件类型: job_executed/job_error/log_[info|error|waring|success]',

@@ -1,6 +1,6 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.date import DateTrigger
-from datetime import datetime, timezone
+from datetime import datetime
 from fastapi.responses import JSONResponse
 from sqlmodel import select, update
 
@@ -8,6 +8,7 @@ from apscheduler_db.core.database import get_db_session
 from apscheduler_db.core.loggin import logger
 from apscheduler_db.models.scheduler_job_model import SchedulerJob
 from apscheduler_db.dtos.response_dto import JobInfoDTO
+from apscheduler_db.dtos import scheduler_job_dto
 
 def run_job_once(scheduler: AsyncIOScheduler, job_id, job, override_kwargs=None):
     '''
@@ -74,10 +75,10 @@ def query_jobs(scheduler: AsyncIOScheduler):
     ) for job in scheduler.get_jobs() if not job.id.startswith('__')]
 
 
-async def list_dbjobs() -> list[SchedulerJob]:
+async def list_dbjobs(valid: list[int] = [1]) -> list[SchedulerJob]:
     async with get_db_session() as db:
         exec = await db.execute(
-            select(SchedulerJob).where(SchedulerJob.valid == 1)
+            select(SchedulerJob).where(SchedulerJob.valid.in_(valid))
         )
         return exec.scalars().all()
 
@@ -96,10 +97,22 @@ async def update_job(job: SchedulerJob):
         return
     
     async with get_db_session() as db:
-        update_query = update(SchedulerJob).where(SchedulerJob.id == job.id).values(**job.model_dump())
+        update_query = update(SchedulerJob).where(SchedulerJob.id == job.id).values(**job.model_dump(exclude_unset=True, exclude=['id', 'func_id', 'created_at', 'updated_at']))
         await db.execute(update_query)
         await db.commit()
 
+async def add_job_db(job: SchedulerJob):
+    '''
+    添加数据库记录
+    '''
+    if not job:
+        return
+
+    async with get_db_session() as db:
+        db.add(job)
+        await db.flush()
+        await db.commit()
+        await db.refresh(job)
 
 async def run_db_task(scheduler: AsyncIOScheduler):
     '''
@@ -158,25 +171,39 @@ async def modify_job(scheduler: AsyncIOScheduler, job: SchedulerJob, updated: bo
         logger.info('[{} - {}] | 更新任务成功', job.func_id, job.name)
     except Exception as e:
         logger.error('[{} - {}] | 更新任务失败: [{}]', job.func_id, job.name, str(e))
-
     
-async def update_job_state(scheduler: AsyncIOScheduler, job_id: str, state: int):
+async def update_job_info(scheduler: AsyncIOScheduler, job_data: scheduler_job_dto.ModifyJobDTO):
     """
     更新任务状态
     """
     if not scheduler:
         raise RuntimeError("Scheduler is not initialized.")
 
-    job = await get_job_by_id(job_id)
+    job = await get_job_by_id(job_data.func_id)
     if job:
         try:
-            job.valid = state
+            job.sqlmodel_update(job_data.model_dump(exclude_none=True, exclude_unset=True, exclude=['id', 'created_at', 'updated_at','func_id']))
             await modify_job(scheduler, job, True)
-            logger.debug(f"Job [{job.name}] state updated to {state}.")
+            logger.debug(f"Job [{job.name}] state updated to {job_data.valid}.")
             return JSONResponse(job.model_dump(exclude_unset=True))
         except Exception as e:
-            logger.exception(f"Job {job_id} 状态更新失败: {e}")
-            return JSONResponse({"job_id": job_id}, status_code=500)
+            logger.exception(f"Job {job.func_id} 状态更新失败: {e}")
+            return JSONResponse(job.model_dump(exclude_unset=True), status_code=500)
     else:
-        logger.error(f"Job {job_id} not found.")
-        return JSONResponse({"job_id": job_id}, status_code=404)
+        logger.error(f"Job {job_data.func_id} not found.")
+        return JSONResponse({"job_id": job_data.func_id}, status_code=404)
+
+
+async def add_job(scheduler: AsyncIOScheduler, job: SchedulerJob):
+    if not scheduler:
+        raise RuntimeError("Scheduler is not initialized.")
+
+    try:
+        scheduler.add_job(**job.update_dict())
+        job.unique_key = job.calculate_unique_key
+        await add_job_db(job)
+        logger.info(f"Job [{job.name}] added successfully.")
+        return scheduler_job_dto.JobInfoDbDTO(**job.model_dump())
+    except Exception as e:
+        logger.exception(f"Job [{job.name}] 添加失败: {e}")
+        return JSONResponse({"job_id": job.func_id}, status_code=500)

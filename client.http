@@ -1,4 +1,4 @@
-@local_api=http://localhost:8889
+@local_api=http://localhost:8888
 
 ###
 GET {{local_api}}/get_scheduler HTTP/1.1
@@ -8,3 +8,37 @@ POST {{local_api}}/run_job/demo_io_task HTTP/1.1
 Content-Type: application/json
 
 {}
+
+### 新增任务
+POST {{local_api}}/add_job HTTP/1.1
+Content-Type: application/json
+
+{
+    "func_id": "demo_io_task2",
+    "func": "apscheduler_db.tasks.demo_task#demo_io_task",
+    "name": "测试IO任务",
+    "trigger": "interval",
+    "trigger_args": {
+        "seconds": 10
+    },
+    "valid": 0,
+    "log_storage_days": 1
+}
+
+### 更新任务状态
+PUT {{local_api}}/job_state/demo_io_task/1 HTTP/1.1
+Content-Type: application/json
+
+### 更新任务
+POST {{local_api}}/modify_job HTTP/1.1
+Content-Type: application/json
+
+{
+    "func_id": "demo_io_task",
+    "name": "测试IO任务更新BBQ",
+    "valid": 0
+}
+
+### 查询所有任务
+GET {{local_api}}/query_jobs HTTP/1.1
+Content-Type: application/json
