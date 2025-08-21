@@ -1,8 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from apscheduler_db.core import manage_task
 import apscheduler_db.services.scheduler_job_service as sts
-
+from apscheduler_db.core.database import get_db_session, AsyncSession
 from apscheduler_db.dtos import response_dto
 
 router = APIRouter()
@@ -26,3 +26,10 @@ def get_scheduler() -> list[response_dto.JobInfoDTO]:
     获取当前的调度器实例
     """
     return sts.query_jobs(manage_task.scheduler)
+
+@router.put("/job_state/{job_id}/{state}", description="暂停/启动指定的调度任务")
+async def update_job_state(job_id: str, state: int):
+    """
+    更新指定调度任务的状态（暂停或启动）
+    """
+    return await sts.update_job_state(manage_task.scheduler, job_id, state)

@@ -81,6 +81,12 @@ async def list_dbjobs() -> list[SchedulerJob]:
         )
         return exec.scalars().all()
 
+async def get_job_by_id(job_id: str) -> SchedulerJob | None:
+    async with get_db_session() as db:
+        exec = await db.execute(
+            select(SchedulerJob).where(SchedulerJob.func_id == job_id)
+        )
+        return exec.scalar()
 
 async def update_job(job: SchedulerJob):
     '''
@@ -154,3 +160,23 @@ async def modify_job(scheduler: AsyncIOScheduler, job: SchedulerJob, updated: bo
         logger.error('[{} - {}] | 更新任务失败: [{}]', job.func_id, job.name, str(e))
 
     
+async def update_job_state(scheduler: AsyncIOScheduler, job_id: str, state: int):
+    """
+    更新任务状态
+    """
+    if not scheduler:
+        raise RuntimeError("Scheduler is not initialized.")
+
+    job = await get_job_by_id(job_id)
+    if job:
+        try:
+            job.valid = state
+            await modify_job(scheduler, job, True)
+            logger.debug(f"Job [{job.name}] state updated to {state}.")
+            return JSONResponse(job.model_dump(exclude_unset=True))
+        except Exception as e:
+            logger.exception(f"Job {job_id} 状态更新失败: {e}")
+            return JSONResponse({"job_id": job_id}, status_code=500)
+    else:
+        logger.error(f"Job {job_id} not found.")
+        return JSONResponse({"job_id": job_id}, status_code=404)
