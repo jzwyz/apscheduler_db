@@ -40,7 +40,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     description=f"{settings.scheduler_app_name}:调度模块",
     title=settings.scheduler_app_name,
-    lifespan=lifespan
+    lifespan=lifespan,
+    openapi_url=settings.scheduler_openapi_url
 )
 
 # 添加路由

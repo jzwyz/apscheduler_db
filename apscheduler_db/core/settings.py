@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     scheduler_default_max_instances: int = 1 # 最大实例数
     scheduler_default_thread: int = 30 # 线程数
     scheduler_default_process: int = 10
+    scheduler_openapi_url: str = "/openapi.json"
 
     @property
     def get_redis_perfix(self):
