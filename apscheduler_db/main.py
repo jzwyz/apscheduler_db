@@ -41,7 +41,7 @@ app = FastAPI(
     description=f"{settings.scheduler_app_name}:调度模块",
     title=settings.scheduler_app_name,
     lifespan=lifespan,
-    openapi_url=settings.scheduler_openapi_url
+    openapi_prefix=settings.scheduler_openapi_prefix
 )
 
 # 添加路由
