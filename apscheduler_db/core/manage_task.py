@@ -3,6 +3,8 @@ from apscheduler_db.core.loggin import logger
 import apscheduler.events as events
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.triggers.cron import CronTrigger
+
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from apscheduler.executors.asyncio import AsyncIOExecutor
 from fastapi import FastAPI
@@ -62,7 +64,7 @@ async def init_task(scheduler: AsyncIOScheduler):
 
     # 每分钟根据数据库的任务配置刷新调度任务
     scheduler.add_job(run_db_task, trigger=IntervalTrigger(minutes=1, seconds=0), max_instances=1, kwargs={'scheduler': scheduler}, id='__run_db_task__')
-    scheduler.add_job(run_clear_logs, trigger=IntervalTrigger(hour=2, minute=0), max_instances=1, id='__run_clear_logs__')
+    scheduler.add_job(run_clear_logs, trigger=CronTrigger(hour=2, minute=0), max_instances=1, id='__run_clear_logs__')
 
 
 async def start_scheduler(app: FastAPI):
