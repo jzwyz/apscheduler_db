@@ -9,6 +9,10 @@ from apscheduler_db.core.loggin import logger
 from apscheduler_db.models.scheduler_job_model import SchedulerJob
 from apscheduler_db.dtos.response_dto import JobInfoDTO
 from apscheduler_db.dtos import scheduler_job_dto
+from apscheduler_db.core.settings import get_settings
+from apscheduler_db.utils.time_utils import get_datetime_tz
+
+setting = get_settings()
 
 def run_job_once(scheduler: AsyncIOScheduler, job_id, job, override_kwargs=None):
     '''
@@ -30,9 +34,10 @@ def run_job_once(scheduler: AsyncIOScheduler, job_id, job, override_kwargs=None)
         'kwargs': job_kwargs,
         'id': f"run_once_{job_id}_{datetime.now().timestamp()}",
         'name': f"手动运行【{job.name}】",
-        'replace_existing': False
+        'replace_existing': False,
+        'timezone': setting.scheduler_default_timezone
     }
-    scheduler.add_job(**job_params, func=job_func, trigger=DateTrigger(run_date=datetime.now()))
+    scheduler.add_job(**job_params, func=job_func, trigger=DateTrigger(run_date=get_datetime_tz(setting.scheduler_default_timezone)))
     return job_params
 
 
@@ -199,9 +204,9 @@ async def add_job(scheduler: AsyncIOScheduler, job: SchedulerJob):
         raise RuntimeError("Scheduler is not initialized.")
 
     try:
-        scheduler.add_job(**job.update_dict())
         job.unique_key = job.calculate_unique_key
         await add_job_db(job)
+        scheduler.add_job(**job.update_dict())
         logger.info(f"Job [{job.name}] added successfully.")
         return scheduler_job_dto.JobInfoDbDTO(**job.model_dump())
     except Exception as e:
